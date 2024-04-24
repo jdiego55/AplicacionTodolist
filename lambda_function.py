@@ -32,38 +32,24 @@ def lambda_handler(event, context):
             'statusCode': 200,
             'body': json.dumps('Tarea agregada con nombre '+ str(nombre_tarea))
         }
+    elif event['requestContext']['http']['method'] == 'POST' and event['requestContext']['http']['path'] == '/completarTarea':
+        # Obtener los datos del cuerpo de la solicitud
+        body= event['body']
+        body_json = json.loads(body)
+        id_tarea = body_json.get('id')
+        gestor.completar_tarea(id_tarea)
+        return {
+            'statusCode': 200,
+            'body': json.dumps('Tarea completada con id '+ str(id_tarea))
+        }
+    elif event['requestContext']['http']['method'] == 'POST' and event['requestContext']['http']['path'] == '/eliminarTarea':
+        # Obtener los datos del cuerpo de la solicitud
+        body= event['body']
+        body_json = json.loads(body)
+        id_tarea = body_json.get('id')
+        gestor.eliminar_tarea(id_tarea)
+        return {
+            'statusCode': 200,
+            'body': json.dumps('Tarea eliminada con id '+ str(id_tarea))
+    }
 
-def main():
-    #gestor = GestorTareas()
-    while True:
-        mostrar_menu()
-        opcion = input("Ingrese el número de la opción que desea: ")
-
-        if opcion == "1":
-            nombre_tarea = input("Ingrese el nombre de la tarea que desea agregar: ")
-            gestor.agregar_tarea(nombre_tarea)
-            print("Tarea agregada correctamente.")
-        elif opcion == "2":
-            nombre_tarea = input("Ingrese el nombre de la tarea que desea eliminar: ")
-            gestor.eliminar_tarea(nombre_tarea)
-            print("Tarea eliminada correctamente.")
-        elif opcion == "3":
-            nombre_tarea = input("Ingrese el nombre de la tarea que desea completar: ")
-            gestor.completar_tarea(nombre_tarea)
-            print("Tarea completada correctamente.")
-        elif opcion == "4":
-            tareas_pendientes = gestor.ver_tareas_pendientes()
-            if tareas_pendientes:
-                print("Tareas pendientes:")
-                for tarea in tareas_pendientes:
-                    print("-", tarea)
-            else:
-                print("No hay tareas pendientes.")
-        elif opcion == "5":
-            print("¡Hasta luego!")
-            break
-        else:
-            print("Opción inválida. Por favor, ingrese un número válido.")
-
-if __name__ == "__main__":
-    main()
